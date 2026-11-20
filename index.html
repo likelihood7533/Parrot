@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鸚鵡小百科</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<style id="base">
+    /* ===== 三版共用：右上角的風格切換 ===== */
+    .theme-switch {
+        position: fixed;
+        top: 32px;
+        right: 20px;
+        transform: translateY(-50%);
+        display: flex;
+        gap: 2px;
+        z-index: 30;
+    }
+
+    .theme-switch button {
+        font: inherit;
+        font-size: 0.85em;
+        padding: 4px 12px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    /* 手機：切換鈕移到左下角 */
+    @media (max-width: 760px) {
+        .theme-switch {
+            position: fixed;
+            top: auto;
+            right: auto;
+            left: 16px;
+            bottom: 24px;
+            transform: none;
+        }
+    }
+</style>
+<style id="theme-simple">
+    /* ===== 配色（取自首頁插圖） ===== */
+    :root {
+        --ink: #5b4636;        /* 咖啡色字，跟插圖線條同色 */
+        --ink-soft: #8a7566;
+        --paper: #fffaf6;      /* 插圖的底色 */
+        --mint: #e3f2ef;       /* 和尚鸚鵡 */
+        --leaf: #e8f3e1;       /* 小太陽 */
+        --butter: #fff3d4;     /* 玄鳳 */
+        --blush: #f7b9b4;      /* 腮紅粉 */
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+        color: var(--ink);
+        background-color: var(--paper);
+        line-height: 1.8;
+        font-size: 15px;
+    }
+
+    /* ===== 導覽列 ===== */
+    nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: rgba(255, 250, 246, 0.92);
+        backdrop-filter: blur(6px);
+        border-bottom: 1px solid #efe4da;
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0 auto;
+        max-width: 1100px;
+        padding: 12px 20px;
+        overflow: hidden;
+    }
+
+    li {
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    a {
+        text-decoration: none;
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 999px;
+        color: var(--ink);
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+    a:hover {
+        background-color: var(--blush);
+    }
+
+    a:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 2px;
+    }
+
+    /* ===== float 工具 ===== */
+    .float-left {
+        float: left;
+    }
+
+    .float-right {
+        float: right;
+    }
+
+    .clear-both {
+        clear: both;
+    }
+
+    /* ===== 每一列（區塊） ===== */
+    .row {
+        display: flow-root;            /* 包住裡面的 float */
+        scroll-margin-top: 58px;       /* 錨點不被導覽列蓋住 */
+        padding: 48px max(20px, calc((100% - 1100px) / 2));
+    }
+
+    #sun { background-color: var(--leaf); }
+    #monk { background-color: var(--mint); }
+    #cockatiel { background-color: var(--butter); }
+
+    .row-title {
+        margin: 0 0 4px;
+        padding: 0 12px;
+        font-size: 1.7em;
+        letter-spacing: 0.05em;
+    }
+
+    .row-desc {
+        margin: 0 0 20px;
+        padding: 0 12px;
+        max-width: 46em;
+        color: var(--ink-soft);
+    }
+
+    /* ===== 盒子 ===== */
+    .box {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .box h3 {
+        margin: 0 0 6px;
+        font-size: 1.15em;
+    }
+
+    /* 名字前的小圓點，顏色 = 那隻鳥的羽色 */
+    .box h3::before {
+        content: "";
+        display: inline-block;
+        width: 0.7em;
+        height: 0.7em;
+        margin-right: 8px;
+        border-radius: 50%;
+        background-color: var(--dot, var(--blush));
+        vertical-align: 0.05em;
+    }
+
+    .box p {
+        margin: 0;
+    }
+
+    /* 圖片：圓形 + float，文字沿著圓形環繞 */
+    .box img {
+        float: left;
+        width: 42%;
+        max-width: 190px;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 5px solid white;
+        margin: 4px 16px 8px 0;
+        shape-outside: circle(50%);
+    }
+
+    .box img.pic-right {
+        float: right;
+        margin: 4px 0 8px 16px;
+    }
+
+    .box21, .box22 { width: 50%; }
+    .box31, .box32, .box33 { width: 33.33%; }
+    .box41, .box42, .box43, .box44 { width: 25%; }
+
+    .box41 img, .box42 img, .box43 img, .box44 img {
+        width: 44%;
+    }
+
+    /* ===== 首頁 ===== */
+    .box11 {
+        padding-top: 16px;
+    }
+
+    .box11 img {
+        width: 46%;
+        max-width: 460px;
+        aspect-ratio: auto;
+        border: 0;
+        border-radius: 28px;
+        shape-outside: none;
+        margin: 0 28px 0 0;
+        mix-blend-mode: multiply;      /* 讓插圖白底融進背景 */
+    }
+
+    .box11 h1 {
+        margin: 40px 0 10px;
+        font-size: 2.4em;
+        letter-spacing: 0.08em;
+    }
+
+    .box11 h1 span {
+        display: inline-block;
+        width: 0.5em;
+        height: 0.5em;
+        margin-left: 8px;
+        border-radius: 50%;
+        background-color: var(--blush);
+    }
+
+    /* 文字區塊用 overflow:hidden 形成 BFC，整塊排在浮動圖片旁邊 */
+    .hero-text {
+        display: flow-root;        /* 形成 BFC 排在圖片旁，又不會切掉發光字 */
+        max-width: 34em;
+    }
+
+    .box11 p {
+        color: var(--ink-soft);
+    }
+
+    .tags {
+        margin-top: 18px;
+    }
+
+    .tags a {
+        margin: 0 6px 8px 0;
+        padding: 6px 16px;
+        background-color: white;
+        border: 1px solid #efe4da;
+    }
+
+    /* ===== 個別圖片調整裁切位置，讓頭部完整出現 ===== */
+    .box img.pos-dusky {
+        object-position: 12% center;
+    }
+
+    .box img.pos-pearl {
+        object-position: center 8%;
+    }
+
+    /* ===== 浮動的回首頁按鈕：小玄鳳 ===== */
+    .back-home {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 20;
+        width: 64px;
+        height: 64px;
+        padding: 0;
+        border-radius: 50%;
+        background-color: white;
+        box-shadow: 0 4px 14px rgba(91, 70, 54, 0.18);
+        /* 一開始藏起來，往下捲才出現 */
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .back-home.show {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
+
+    .back-home:hover {
+        background-color: white;
+    }
+
+    .back-home svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    /* 滑鼠移上去：小鳥歪頭晃一晃 */
+    .back-home:hover .bird {
+        animation: wiggle 0.6s ease-in-out infinite;
+    }
+
+    .bird {
+        transform-origin: 32px 48px;
+    }
+
+    @keyframes wiggle {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
+
+    /* 對話泡泡 */
+    .bubble {
+        position: absolute;
+        right: 72px;
+        top: 50%;
+        white-space: nowrap;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background-color: var(--ink);
+        color: white;
+        font-size: 0.85em;
+        opacity: 0;
+        transform: translate(8px, -50%);
+        transition: opacity 0.2s, transform 0.2s;
+        pointer-events: none;
+    }
+
+    .back-home:hover .bubble,
+    .back-home:focus-visible .bubble {
+        opacity: 1;
+        transform: translate(0, -50%);
+    }
+
+    /* 點下去：小鳥往上飛走 */
+    .back-home.fly {
+        transform: translateY(-120vh) rotate(-15deg);
+        transition: transform 0.8s ease-in;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .back-home:hover .bird { animation: none; }
+        .back-home.fly { transform: none; }
+    }
+
+    footer {
+        text-align: center;
+        padding: 24px;
+        font-size: 0.85em;
+        color: var(--ink-soft);
+    }
+
+    /* ===== 平板：四格改兩格 ===== */
+    @media (max-width: 900px) {
+        .box41, .box42, .box43, .box44 { width: 50%; }
+        .box41 img, .box42 img, .box43 img, .box44 img { width: 42%; }
+    }
+
+    /* ===== 手機：一格一列 ===== */
+    @media (max-width: 640px) {
+        .box21, .box22,
+        .box31, .box32, .box33,
+        .box41, .box42, .box43, .box44 {
+            width: 100%;
+        }
+
+        .hero-text { overflow: visible; }
+
+        .box11 img {
+            float: none;
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .box11 h1 {
+            margin-top: 10px;
+            font-size: 2em;
+        }
+
+        a {
+            padding: 6px 10px;
+        }
+
+        .row {
+            padding-top: 36px;
+            padding-bottom: 36px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+    }
+
+    /* ===== 風格切換（簡約） ===== */
+    .theme-switch {
+        background-color: white;
+        border: 1px solid #efe4da;
+        border-radius: 999px;
+        padding: 3px;
+    }
+
+    .theme-switch button {
+        color: var(--ink);
+        border-radius: 999px;
+    }
+
+    .theme-switch button[aria-pressed="true"] {
+        background-color: var(--blush);
+    }
+
+    .night-only { display: none; }
+</style>
+<style id="theme-cartoon">
+    /* ===== 卡通版配色 ===== */
+    :root {
+        --line: #2d2a32;       /* 粗黑描邊 */
+        --paper: #fff8e1;
+        --pink: #ff8fb1;
+        --sun: #b9f09c;        /* 小太陽：草綠 */
+        --monk: #9ee6f2;       /* 和尚：天空藍 */
+        --tiel: #ffe27a;       /* 玄鳳：檸檬黃 */
+        --white: #ffffff;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+        font-weight: 500;
+        color: var(--line);
+        line-height: 1.8;
+        font-size: 15px;
+        /* 圓點點背景 */
+        background-color: var(--paper);
+        background-image: radial-gradient(#ffd9a8 2px, transparent 2.5px);
+        background-size: 22px 22px;
+    }
+
+    /* ===== 導覽列 ===== */
+    nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: var(--white);
+        border-bottom: 3px solid var(--line);
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0 auto;
+        max-width: 1100px;
+        padding: 12px 20px;
+        overflow: hidden;
+    }
+
+    li {
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    a {
+        text-decoration: none;
+        display: inline-block;
+        padding: 4px 16px;
+        border: 3px solid var(--line);
+        border-radius: 14px;
+        background-color: var(--white);
+        color: var(--line);
+        font-weight: 900;
+        box-shadow: 3px 3px 0 var(--line);
+        transition: transform 0.12s, box-shadow 0.12s, background-color 0.12s;
+    }
+
+    a:hover {
+        background-color: var(--pink);
+        transform: translate(-2px, -2px);
+        box-shadow: 5px 5px 0 var(--line);
+    }
+
+    a:active {
+        transform: translate(3px, 3px);
+        box-shadow: 0 0 0 var(--line);
+    }
+
+    a:focus-visible {
+        outline: 3px dashed var(--pink);
+        outline-offset: 3px;
+    }
+
+    /* ===== float 工具 ===== */
+    .float-left {
+        float: left;
+    }
+
+    .float-right {
+        float: right;
+    }
+
+    .clear-both {
+        clear: both;
+    }
+
+    /* ===== 每一列 ===== */
+    .row {
+        display: flow-root;
+        scroll-margin-top: 64px;
+        padding: 48px max(20px, calc((100% - 1100px) / 2));
+        border-top: 3px solid var(--line);
+    }
+
+    #home {
+        border-top: 0;
+    }
+
+    #sun { background-color: var(--sun); }
+    #monk { background-color: var(--monk); }
+    #cockatiel { background-color: var(--tiel); }
+
+    /* 區塊標題做成貼紙 */
+    .row-title {
+        display: inline-block;
+        margin: 0 0 14px 12px;
+        padding: 2px 22px;
+        font-size: 1.7em;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        background-color: var(--white);
+        border: 3px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 4px 4px 0 var(--line);
+        transform: rotate(-2deg);
+    }
+
+    /* 說明文字做成對話框 */
+    .row-desc {
+        position: relative;
+        margin: 0 12px 24px;
+        padding: 10px 18px;
+        max-width: 46em;
+        background-color: var(--white);
+        border: 3px solid var(--line);
+        border-radius: 16px;
+    }
+
+    .row-desc::before {
+        content: "";
+        position: absolute;
+        left: 28px;
+        top: -12px;
+        width: 18px;
+        height: 18px;
+        background-color: var(--white);
+        border-left: 3px solid var(--line);
+        border-top: 3px solid var(--line);
+        transform: rotate(45deg);
+    }
+
+    /* ===== 盒子 ===== */
+    .box {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .box h3 {
+        margin: 0 0 6px;
+        font-size: 1.2em;
+        font-weight: 900;
+    }
+
+    /* 名字前的羽色圓點加黑框 */
+    .box h3::before {
+        content: "";
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        margin-right: 8px;
+        border-radius: 50%;
+        border: 2.5px solid var(--line);
+        background-color: var(--dot, var(--pink));
+        vertical-align: -0.05em;
+    }
+
+    .box p {
+        margin: 0;
+    }
+
+    /* 圖片：粗框圓形 + 硬陰影，像貼紙 */
+    .box img {
+        float: left;
+        width: 42%;
+        max-width: 190px;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid var(--line);
+        box-shadow: 5px 5px 0 var(--line);
+        margin: 4px 18px 10px 0;
+        shape-outside: circle(50%);
+        transition: transform 0.2s;
+    }
+
+    .box img:hover {
+        transform: rotate(-6deg) scale(1.04);
+    }
+
+    .box img.pic-right {
+        float: right;
+        margin: 4px 0 10px 18px;
+    }
+
+    .box img.pos-dusky {
+        object-position: 12% center;
+    }
+
+    .box img.pos-pearl {
+        object-position: center 8%;
+    }
+
+    .box21, .box22 { width: 50%; }
+    .box31, .box32, .box33 { width: 33.33%; }
+    .box41, .box42, .box43, .box44 { width: 25%; }
+
+    .box41 img, .box42 img, .box43 img, .box44 img {
+        width: 44%;
+    }
+
+    /* ===== 首頁 ===== */
+    .box11 {
+        padding-top: 16px;
+    }
+
+    .box11 img {
+        width: 46%;
+        max-width: 440px;
+        aspect-ratio: auto;
+        border-radius: 28px;
+        shape-outside: none;
+        margin: 0 32px 10px 0;
+        background-color: var(--white);
+        transform: rotate(-2deg);
+    }
+
+    .box11 img:hover {
+        transform: rotate(2deg);
+    }
+
+    .hero-text {
+        display: flow-root;        /* 形成 BFC 排在圖片旁，又不會切掉發光字 */
+        max-width: 34em;
+    }
+
+    .box11 h1 {
+        margin: 36px 0 12px;
+        font-size: 2.8em;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        color: var(--white);
+        -webkit-text-stroke: 2px var(--line);
+        paint-order: stroke fill;
+        text-shadow: 4px 4px 0 var(--line);
+    }
+
+    .box11 h1 span {
+        display: inline-block;
+        width: 0.45em;
+        height: 0.45em;
+        margin-left: 10px;
+        border-radius: 50%;
+        border: 3px solid var(--line);
+        background-color: var(--pink);
+    }
+
+    .box11 p {
+        padding: 12px 18px;
+        background-color: var(--white);
+        border: 3px solid var(--line);
+        border-radius: 16px;
+    }
+
+    .tags {
+        margin-top: 18px;
+    }
+
+    .tags a {
+        margin: 0 8px 10px 0;
+    }
+
+    .tags a:nth-child(1) { background-color: var(--sun); }
+    .tags a:nth-child(2) { background-color: var(--monk); }
+    .tags a:nth-child(3) { background-color: var(--tiel); }
+
+    /* ===== 浮動回首頁：小玄鳳 ===== */
+    .back-home {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 20;
+        width: 68px;
+        height: 68px;
+        padding: 0;
+        border-radius: 50%;
+        background-color: var(--white);
+        border: 3px solid var(--line);
+        box-shadow: 4px 4px 0 var(--line);
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .back-home.show {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
+
+    .back-home:hover {
+        background-color: var(--white);
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0 var(--line);
+    }
+
+    .back-home svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .back-home:hover .bird {
+        animation: wiggle 0.6s ease-in-out infinite;
+    }
+
+    .bird {
+        transform-origin: 32px 48px;
+    }
+
+    @keyframes wiggle {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
+
+    .bubble {
+        position: absolute;
+        right: 78px;
+        top: 50%;
+        white-space: nowrap;
+        padding: 2px 14px;
+        border: 3px solid var(--line);
+        border-radius: 14px;
+        background-color: var(--pink);
+        color: var(--line);
+        font-weight: 900;
+        font-size: 0.9em;
+        opacity: 0;
+        transform: translate(8px, -50%);
+        transition: opacity 0.2s, transform 0.2s;
+        pointer-events: none;
+    }
+
+    .back-home:hover .bubble,
+    .back-home:focus-visible .bubble {
+        opacity: 1;
+        transform: translate(0, -50%);
+    }
+
+    .back-home.fly {
+        transform: translateY(-120vh) rotate(-15deg);
+        transition: transform 0.8s ease-in;
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        font-weight: 900;
+        background-color: var(--white);
+        border-top: 3px solid var(--line);
+    }
+
+    /* ===== 平板 ===== */
+    @media (max-width: 900px) {
+        .box41, .box42, .box43, .box44 { width: 50%; }
+        .box41 img, .box42 img, .box43 img, .box44 img { width: 42%; }
+    }
+
+    /* ===== 手機 ===== */
+    @media (max-width: 640px) {
+        .box21, .box22,
+        .box31, .box32, .box33,
+        .box41, .box42, .box43, .box44 {
+            width: 100%;
+        }
+
+        .hero-text { overflow: visible; }
+
+        .box11 img {
+            float: none;
+            display: block;
+            width: 100%;
+            margin: 0 auto 10px;
+        }
+
+        .box11 h1 {
+            margin-top: 14px;
+            font-size: 2.2em;
+        }
+
+        li { margin-right: 4px; }
+
+        a { padding: 3px 10px; }
+
+        .row {
+            padding-top: 36px;
+            padding-bottom: 36px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .back-home:hover .bird { animation: none; }
+        .back-home.fly { transform: none; }
+        .box img:hover, .box11 img:hover { transform: none; }
+    }
+
+    /* ===== 風格切換（卡通） ===== */
+    .theme-switch {
+        background-color: var(--white);
+        border: 3px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 3px 3px 0 var(--line);
+        padding: 2px;
+    }
+
+    .theme-switch button {
+        color: var(--line);
+        font-weight: 900;
+        border-radius: 10px;
+    }
+
+    .theme-switch button[aria-pressed="true"] {
+        background-color: var(--pink);
+    }
+
+    .night-only { display: none; }
+</style>
+
+<style id="theme-night">
+    /* ===== 夜晚鳥園版：配色 ===== */
+    :root {
+        --bg: #1c2042;
+        --bg-deep: #141733;
+        --text: #f3eedf;
+        --soft: #b8b3d8;
+        --lantern: #ffd479;
+        --pink: #ff9ec4;
+        --c: var(--lantern);    /* 每個區塊的主色，下面會換 */
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+        color: var(--text);
+        line-height: 1.8;
+        font-size: 15px;
+        background-color: var(--bg);
+        /* 星星 */
+        background-image:
+            radial-gradient(1.5px 1.5px at 30px 40px, #fff 50%, transparent 51%),
+            radial-gradient(1px 1px at 120px 90px, #fff 50%, transparent 51%),
+            radial-gradient(1.5px 1.5px at 200px 160px, #ffe9b0 50%, transparent 51%),
+            radial-gradient(1px 1px at 80px 190px, #fff 50%, transparent 51%);
+        background-size: 240px 240px;
+        background-attachment: fixed;
+    }
+
+    /* 會閃爍的第二層星星 */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+            radial-gradient(2px 2px at 60px 120px, #fff 50%, transparent 51%),
+            radial-gradient(1.5px 1.5px at 170px 30px, #ffe9b0 50%, transparent 51%);
+        background-size: 260px 260px;
+        animation: twinkle 3s ease-in-out infinite alternate;
+        z-index: 0;
+    }
+
+    @keyframes twinkle {
+        from { opacity: 0.2; }
+        to { opacity: 1; }
+    }
+
+    /* 跟著滑鼠的燈籠光 */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 30%),
+                rgba(255, 212, 121, 0.10), transparent 70%);
+    }
+
+    /* ===== 導覽列 ===== */
+    nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: rgba(20, 23, 51, 0.85);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0 auto;
+        max-width: 1100px;
+        padding: 12px 20px;
+        overflow: hidden;
+    }
+
+    li {
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    a {
+        text-decoration: none;
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 999px;
+        color: var(--soft);
+        font-weight: 500;
+        transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
+    }
+
+    a:hover {
+        color: var(--text);
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* 目前看到哪一區，選單就亮哪一個 */
+    nav a.active {
+        color: var(--bg-deep);
+        background-color: var(--lantern);
+        box-shadow: 0 0 16px rgba(255, 212, 121, 0.6);
+    }
+
+    a:focus-visible {
+        outline: 2px solid var(--lantern);
+        outline-offset: 2px;
+    }
+
+    /* 捲動進度：小鳥沿著線飛 */
+    .progress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -2px;
+        height: 2px;
+    }
+
+    .progress-bar {
+        display: block;
+        height: 100%;
+        width: var(--p, 0%);
+        background: linear-gradient(90deg, var(--pink), var(--lantern));
+        box-shadow: 0 0 8px var(--lantern);
+    }
+
+    .progress-bird {
+        position: absolute;
+        top: -14px;
+        left: clamp(0px, calc(var(--p, 0%) - 15px), calc(100% - 30px));
+        width: 30px;
+        height: 30px;
+    }
+
+    /* ===== float 工具 ===== */
+    .float-left { float: left; }
+    .float-right { float: right; }
+    .clear-both { clear: both; }
+
+    /* ===== 每一列 ===== */
+    .row {
+        position: relative;
+        z-index: 1;
+        display: flow-root;
+        scroll-margin-top: 58px;
+        padding: 56px max(20px, calc((100% - 1100px) / 2));
+    }
+
+    #sun { --c: #a6ec8f; }
+    #monk { --c: #8fd8ff; }
+    #cockatiel { --c: #ffd479; }
+
+    #sun, #monk, #cockatiel {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 60%);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .row-title {
+        margin: 0 0 4px;
+        padding: 0 12px;
+        font-size: 1.9em;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--c);
+        text-shadow: 0 0 18px var(--c);
+    }
+
+    .row-desc {
+        margin: 0 0 24px;
+        padding: 0 12px;
+        max-width: 46em;
+        color: var(--soft);
+    }
+
+    /* ===== 盒子：捲到才浮現 ===== */
+    .box {
+        position: relative;
+        width: 100%;
+        padding: 14px;
+        border-radius: 20px;
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.6s, transform 0.6s, background-color 0.3s;
+        transition-delay: calc(var(--i, 0) * 0.12s);
+    }
+
+    .box.in-view {
+        opacity: 1;
+        transform: none;
+    }
+
+    .box:not(.box11):hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .box h3 {
+        margin: 0 0 6px;
+        font-size: 1.15em;
+        color: var(--text);
+    }
+
+    .box h3::before {
+        content: "";
+        display: inline-block;
+        width: 0.7em;
+        height: 0.7em;
+        margin-right: 8px;
+        border-radius: 50%;
+        background-color: var(--dot, var(--c));
+        box-shadow: 0 0 10px var(--dot, var(--c));
+        vertical-align: 0.05em;
+    }
+
+    .box p {
+        margin: 0;
+        color: #ddd8ea;
+    }
+
+    /* 圖片：發光圓框，可以點 */
+    .box img {
+        float: left;
+        width: 42%;
+        max-width: 190px;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--c);
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.04), 0 0 22px -4px var(--c);
+        margin: 4px 18px 10px 0;
+        shape-outside: circle(50%);
+        cursor: pointer;
+        transition: box-shadow 0.3s;
+    }
+
+    .box img:hover {
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.08), 0 0 34px 0 var(--c);
+    }
+
+    .box img.hop {
+        animation: hop 0.5s ease;
+    }
+
+    @keyframes hop {
+        0%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-14px) rotate(-6deg); }
+        70% { transform: translateY(0) rotate(4deg); }
+    }
+
+    /* 點圖片冒出的「啾！」 */
+    .chirp-pop {
+        position: absolute;
+        z-index: 3;
+        padding: 2px 12px;
+        border-radius: 999px;
+        background-color: var(--c);
+        color: var(--bg-deep);
+        font-weight: 700;
+        pointer-events: none;
+        animation: pop-up 0.9s ease-out forwards;
+    }
+
+    @keyframes pop-up {
+        0% { opacity: 0; transform: translateY(6px) scale(0.6); }
+        25% { opacity: 1; transform: translateY(-6px) scale(1.1); }
+        100% { opacity: 0; transform: translateY(-40px) scale(1); }
+    }
+
+    .box img.pic-right {
+        float: right;
+        margin: 4px 0 10px 18px;
+    }
+
+    .box img.pos-dusky { object-position: 12% center; }
+    .box img.pos-pearl { object-position: center 8%; }
+
+    .box21, .box22 { width: 50%; }
+    .box31, .box32, .box33 { width: 33.33%; }
+    .box41, .box42, .box43, .box44 { width: 25%; }
+
+    .box41 img, .box42 img, .box43 img, .box44 img { width: 44%; }
+
+    /* ===== 首頁 ===== */
+    .box11 { padding-top: 16px; }
+
+    .box11 img {
+        width: 46%;
+        max-width: 440px;
+        aspect-ratio: auto;
+        border-radius: 28px;
+        border: 0;
+        shape-outside: none;
+        margin: 0 32px 10px 0;
+        box-shadow: 0 0 60px -10px rgba(255, 212, 121, 0.55);
+        cursor: default;
+    }
+
+    .hero-text {
+        display: flow-root;        /* 形成 BFC 排在圖片旁，又不會切掉發光字 */
+        max-width: 34em;
+        padding: 0 10px;           /* 留空間給發光字，不被切掉 */
+    }
+
+    .box11 h1 {
+        margin: 40px 0 10px;
+        font-size: 2.6em;
+        letter-spacing: 0.08em;
+        color: var(--lantern);
+        text-shadow: 0 0 24px rgba(255, 212, 121, 0.7);
+    }
+
+    .box11 h1 span {
+        display: inline-block;
+        width: 0.5em;
+        height: 0.5em;
+        margin-left: 10px;
+        border-radius: 50%;
+        background-color: var(--pink);
+        box-shadow: 0 0 14px var(--pink);
+    }
+
+    .box11 p { color: var(--soft); }
+
+    .tags { margin-top: 18px; }
+
+    .tags a {
+        margin: 0 8px 10px 0;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: var(--text);
+    }
+
+    .tags a:hover {
+        border-color: var(--lantern);
+        box-shadow: 0 0 14px rgba(255, 212, 121, 0.4);
+    }
+
+    /* ===== 浮動回首頁：小玄鳳 ===== */
+    .back-home {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 20;
+        width: 64px;
+        height: 64px;
+        padding: 0;
+        border-radius: 50%;
+        background-color: #2a2f5e;
+        box-shadow: 0 0 22px rgba(255, 212, 121, 0.45);
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .back-home.show {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
+
+    .back-home:hover {
+        background-color: #353b72;
+    }
+
+    .back-home svg { width: 100%; height: 100%; display: block; }
+
+    .back-home:hover .bird { animation: wiggle 0.6s ease-in-out infinite; }
+
+    .bird { transform-origin: 32px 48px; }
+
+    @keyframes wiggle {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
+
+    .bubble {
+        position: absolute;
+        right: 72px;
+        top: 50%;
+        white-space: nowrap;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background-color: var(--lantern);
+        color: var(--bg-deep);
+        font-weight: 700;
+        font-size: 0.85em;
+        opacity: 0;
+        transform: translate(8px, -50%);
+        transition: opacity 0.2s, transform 0.2s;
+        pointer-events: none;
+    }
+
+    .back-home:hover .bubble,
+    .back-home:focus-visible .bubble {
+        opacity: 1;
+        transform: translate(0, -50%);
+    }
+
+    .back-home.fly {
+        transform: translateY(-120vh) rotate(-15deg);
+        transition: transform 0.8s ease-in;
+    }
+
+    footer {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 24px;
+        font-size: 0.85em;
+        color: var(--soft);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* ===== 平板 / 手機 ===== */
+    @media (max-width: 900px) {
+        .box41, .box42, .box43, .box44 { width: 50%; }
+        .box41 img, .box42 img, .box43 img, .box44 img { width: 42%; }
+    }
+
+    @media (max-width: 640px) {
+        .box21, .box22,
+        .box31, .box32, .box33,
+        .box41, .box42, .box43, .box44 { width: 100%; }
+
+        .hero-text { overflow: visible; }
+
+        .box11 img {
+            float: none;
+            display: block;
+            width: 100%;
+            margin: 0 auto 10px;
+        }
+
+        .box11 h1 { margin-top: 14px; font-size: 2em; }
+        li { margin-right: 2px; }
+        a { padding: 6px 10px; }
+        .row { padding-top: 40px; padding-bottom: 40px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        body::before { animation: none; }
+        .box { opacity: 1; transform: none; transition: none; }
+        .box img.hop, .back-home:hover .bird { animation: none; }
+        .back-home.fly { transform: none; }
+    }
+
+    /* ===== 風格切換（夜晚） ===== */
+    .theme-switch {
+        background-color: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        padding: 3px;
+    }
+
+    .theme-switch button {
+        color: var(--soft);
+        border-radius: 999px;
+    }
+
+    .theme-switch button[aria-pressed="true"] {
+        color: var(--bg-deep);
+        background-color: var(--lantern);
+        box-shadow: 0 0 12px rgba(255, 212, 121, 0.6);
+    }
+</style>
+
+    <script>
+        // 一載入就套用上次選的風格，避免畫面閃一下
+        (function () {
+            let t = "simple";
+            try { t = localStorage.getItem("parrot-theme") || "simple"; } catch (e) {}
+            ["simple", "cartoon", "night"].forEach(function (k) {
+                document.getElementById("theme-" + k).disabled = (k !== t);
+            });
+            document.documentElement.dataset.theme = t;
+        })();
+    </script>
+
+<body>
+    <!-- unordered list -->
+    <nav>
+        <ul>
+            <li><a href="#home">首頁</a></li>
+            <li><a href="#sun">小太陽鸚鵡</a></li>
+            <li><a href="#monk">和尚鸚鵡</a></li>
+            <li><a href="#cockatiel">玄鳳鸚鵡</a></li>
+        </ul>
+        <!-- 夜晚版才顯示：捲動進度小鳥 -->
+        <div class="progress night-only" aria-hidden="true">
+            <span class="progress-bar"></span>
+            <svg class="progress-bird" viewBox="0 0 64 64">
+                <circle cx="32" cy="34" r="16" fill="#fde9a6" />
+                <path d="M30 20 C28 12 32 7 37 6 C34 11 35 15 36 19 Z" fill="#f2d36b" />
+                <circle cx="25" cy="37" r="4" fill="#f7a39c" />
+                <circle cx="39" cy="37" r="4" fill="#f7a39c" />
+                <circle cx="27" cy="32" r="2.2" fill="#1c2042" />
+                <circle cx="37" cy="32" r="2.2" fill="#1c2042" />
+                <path d="M30 36 L34 36 L32 40 Z" fill="#f5b26b" />
+            </svg>
+        </div>
+    </nav>
+
+    <!-- 右上角：切換設計風格（放在 nav 外面，才不會被 nav 的模糊效果影響定位） -->
+    <div class="theme-switch" role="group" aria-label="切換設計風格">
+        <button type="button" data-theme="simple">簡約</button>
+        <button type="button" data-theme="cartoon">卡通</button>
+        <button type="button" data-theme="night">夜晚</button>
+    </div>
+
+    <!-- 首頁 -->
+    <div id="home" class="row">
+        <div class="box box11">
+            <img src="images/首頁.jpg" alt="和尚、玄鳳、虎皮鸚鵡插圖">
+            <div class="hero-text">
+            <h1>鸚鵡小百科<span></span></h1>
+            <p>
+                認識三種很受歡迎的伴侶鸚鵡：活潑黏人的小太陽、愛講話的和尚鸚鵡，
+                還有頂著一撮冠羽的玄鳳鸚鵡。
+                鸚鵡聰明又長壽，常見的小型鸚鵡能活十幾到二三十年，
+                需要大量陪伴、均衡飲食和安全的活動空間。
+                決定飼養前先做好功課，並承諾不棄養、不放生。
+            </p>
+            <div class="tags">
+                <a href="#sun">小太陽鸚鵡</a>
+                <a href="#monk">和尚鸚鵡</a>
+                <a href="#cockatiel">玄鳳鸚鵡</a>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 小太陽鸚鵡 -->
+    <div id="sun" class="row clear-both">
+        <h2 class="row-title">小太陽鸚鵡</h2>
+        <p class="row-desc">原產南美洲的錐尾鸚鵡，體型小、個性親人，是台灣很常見的寵物鳥。</p>
+        <div class="box box21 float-left" style="--dot: #8fa38a;">
+            <img class="pos-dusky" src="images/暗頭小太陽.jpg" alt="暗頭小太陽">
+            <h3>暗頭小太陽</h3>
+            <p>
+                學名 Aratinga weddellii，又叫韋德爾鸚鵡，原產於亞馬遜盆地西部。
+                體長約 28 公分，身體是綠色，頭部帶灰褐色，眼睛外圍有一圈很明顯的白色眼圈。
+                牠是同屬中唯一頭部呈灰色的種類。個性溫和、喜歡跟人互動，
+                而且比太陽鸚鵡等近親安靜，適合住在公寓的家庭，壽命可達 30 年以上。
+            </p>
+        </div>
+        <div class="box box22 float-left" style="--dot: #7cc06a;">
+            <img class="pic-right" src="images/綠頰小太陽.jpg" alt="綠頰小太陽">
+            <h3>綠頰小太陽</h3>
+            <p>
+                學名 Pyrrhura molinae，體長約 25 公分，是最小型的錐尾鸚鵡之一。
+                頭頂深褐、臉頰綠色，胸前有灰色鱗片般的橫紋，腹部和尾羽帶紅色。
+                牠價格親民、音量比大型鸚鵡小，又活潑愛玩、喜歡鑽進主人衣服裡撒嬌，
+                是很多新手入門的第一隻鸚鵡，壽命約 30 年。
+            </p>
+        </div>
+    </div>
+
+    <!-- 和尚鸚鵡 -->
+    <div id="monk" class="row clear-both">
+        <h2 class="row-title">和尚鸚鵡</h2>
+        <p class="row-desc">學名 Myiopsitta monachus，原產阿根廷、烏拉圭等南美洲地區，體長約 30 公分，名字來自胸前像僧袍的灰白羽毛。飼養下壽命約 20～30 年。</p>
+        <div class="box box31 float-left" style="--dot: #8ccb7a;">
+            <img src="images/綠和尚.jpg" alt="綠和尚">
+            <h3>綠和尚</h3>
+            <p>
+                最原始的羽色：亮綠色身體、灰白胸口、藍色飛羽。
+                和尚鸚鵡是少數會用樹枝蓋出大型「公寓巢」的鸚鵡，每對都有自己的房間。
+                牠們聰明又愛說話，學舌能力在小型鸚鵡中名列前茅。
+            </p>
+        </div>
+        <div class="box box32 float-left" style="--dot: #8ec5e8;">
+            <img src="images/藍和尚.jpg" alt="藍和尚">
+            <h3>藍和尚</h3>
+            <p>
+                人工培育出的藍化品種，羽毛缺少黃色色素，
+                原本的綠色就變成柔和的粉藍色，搭配灰白胸毛看起來更清爽。
+                外型不同，但聰明、黏人又愛聊天的個性跟綠和尚一樣。
+            </p>
+        </div>
+        <div class="box box33 float-left" style="--dot: #f2d36b;">
+            <img src="images/黃和尚.jpg" alt="黃和尚">
+            <h3>黃和尚</h3>
+            <p>
+                黃化品種，羽毛缺少黑色素，全身呈現奶油般的淡黃色，
+                胸前的鱗片紋也變成淺黃白色，嘴喙是粉膚色。
+                顏色比較少見，價格通常也比原始綠色高一些。
+            </p>
+        </div>
+    </div>
+
+    <!-- 玄鳳鸚鵡 -->
+    <div id="cockatiel" class="row clear-both">
+        <h2 class="row-title">玄鳳鸚鵡</h2>
+        <p class="row-desc">學名 Nymphicus hollandicus，又叫雞尾鸚鵡，原產澳洲，體長約 30 公分，長尾巴約佔身長一半。頭上的冠羽是情緒雷達，個性溫和但膽小，壽命約 20 年。</p>
+        <div class="box box41 float-left" style="--dot: #9a9aa3;">
+            <img src="images/原生種玄鳳.jpg" alt="原生種玄鳳">
+            <h3>原生種玄鳳</h3>
+            <p>
+                也叫原始灰，是澳洲野外的原本模樣：灰色身體配白色翅膀斑。
+                公鳥換羽後臉部亮黃、橘紅腮紅清楚；母鳥臉部偏灰。
+                基因最強勢、最常見，價格也最親民。
+            </p>
+        </div>
+        <div class="box box42 float-left" style="--dot: #d6d6dc;">
+            <img class="pos-pearl" src="images/白面珍珠玄鳳.jpg" alt="白面珍珠玄鳳">
+            <h3>白面珍珠玄鳳</h3>
+            <p>
+                結合兩種變異：「白面」讓黃、橘、紅色素消失，所以沒有腮紅、臉是白色；
+                「珍珠」讓背部和翅膀出現魚鱗般的斑點。
+                公鳥長大換羽後，珍珠斑可能會漸漸褪去。
+            </p>
+        </div>
+        <div class="box box43 float-left" style="--dot: #f5b26b;">
+            <img src="images/黃化玄鳳.jpg" alt="黃化玄鳳">
+            <h3>黃化玄鳳</h3>
+            <p>
+                羽毛缺少黑色素，全身白到奶油黃，保留黃色臉和橘紅腮紅，眼睛是紅色的，
+                就是大家印象中「黃臉紅腮」的經典玄鳳。
+                繁殖容易、需求大，屬於入門款。
+            </p>
+        </div>
+        <div class="box box44 float-left" style="--dot: #b5c47f;">
+            <img src="images/綠寶石玄鳳.jpg" alt="綠寶石玄鳳">
+            <h3>綠寶石玄鳳</h3>
+            <p>
+                英文 Emerald，也叫橄欖（Olive）玄鳳，是隱性遺傳的變異。
+                灰色羽毛上帶有淡淡的黃綠色調，看起來像蒙上一層霧面，
+                斑駁又低調，數量較少，屬於比較少見的花色。
+            </p>
+        </div>
+    </div>
+
+    <a class="back-home" href="#home" aria-label="回到首頁">
+        <span class="bubble">啾～回首頁</span>
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+            <g class="bird">
+                <!-- 冠羽 -->
+                <path d="M30 18 C28 10 32 5 37 4 C34 9 35 13 36 17 Z" fill="#f2d36b" />
+                <!-- 身體 -->
+                <ellipse cx="32" cy="44" rx="15" ry="12" fill="#fff8e8" stroke="#5b4636" stroke-width="2" />
+                <!-- 頭 -->
+                <circle cx="32" cy="28" r="12" fill="#fde9a6" stroke="#5b4636" stroke-width="2" />
+                <!-- 腮紅 -->
+                <circle cx="24.5" cy="31" r="3.2" fill="#f7a39c" />
+                <circle cx="39.5" cy="31" r="3.2" fill="#f7a39c" />
+                <!-- 眼睛 -->
+                <circle cx="27" cy="27" r="1.6" fill="#5b4636" />
+                <circle cx="37" cy="27" r="1.6" fill="#5b4636" />
+                <!-- 嘴 -->
+                <path d="M30 30 L34 30 L32 33.5 Z" fill="#f5b26b" />
+                <!-- 小腳 -->
+                <path d="M27 55 v3 M37 55 v3" stroke="#f7a39c" stroke-width="2" stroke-linecap="round" />
+            </g>
+        </svg>
+    </a>
+
+    <footer class="clear-both">鸚鵡小百科 ・ 網頁設計作業</footer>
+
+
+    <script>
+        const root = document.documentElement;
+        const isNight = () => root.dataset.theme === "night";
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ========== 1. 右上角切換風格 ========== */
+        const themeBtns = document.querySelectorAll(".theme-switch button");
+
+        function setTheme(t) {
+            ["simple", "cartoon", "night"].forEach((k) => {
+                document.getElementById("theme-" + k).disabled = (k !== t);
+            });
+            root.dataset.theme = t;
+            themeBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.theme === t));
+            // 清掉夜晚版留下的傾斜效果
+            document.querySelectorAll(".box").forEach((box) => (box.style.transform = ""));
+            try { localStorage.setItem("parrot-theme", t); } catch (e) {}
+        }
+
+        themeBtns.forEach((b) => b.addEventListener("click", () => setTheme(b.dataset.theme)));
+        setTheme(root.dataset.theme || "simple");
+
+        /* ========== 2. 浮動回首頁小玄鳳 ========== */
+        const homeBtn = document.querySelector(".back-home");
+
+        homeBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            homeBtn.classList.add("fly");
+            document.getElementById("home").scrollIntoView({ behavior: "smooth" });
+            setTimeout(() => homeBtn.classList.remove("fly", "show"), 900);
+        });
+
+        /* ========== 3. 捲動：回首頁按鈕 + 夜晚版進度小鳥 ========== */
+        function onScroll() {
+            if (!homeBtn.classList.contains("fly")) {
+                homeBtn.classList.toggle("show", window.scrollY > 300);
+            }
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            const p = max > 0 ? (window.scrollY / max) * 100 : 0;
+            root.style.setProperty("--p", p + "%");
+        }
+        window.addEventListener("scroll", onScroll);
+        onScroll();
+
+        /* ========== 4. 目前看到的區塊，選單跟著亮（夜晚版有樣式） ========== */
+        const navLinks = document.querySelectorAll("nav ul a");
+        const rows = document.querySelectorAll(".row");
+        let spyLockUntil = 0;
+
+        function setActive(id) {
+            navLinks.forEach((a) =>
+                a.classList.toggle("active", a.getAttribute("href") === "#" + id));
+        }
+
+        // 依照捲動位置判斷：哪一區的頂端已經越過「導覽列下方約 1/3 畫面」那條線
+        function updateActive() {
+            if (Date.now() < spyLockUntil) return;
+            const line = document.querySelector("nav").offsetHeight + window.innerHeight * 0.33;
+            let current = rows[0].id;
+            rows.forEach((r) => {
+                if (r.getBoundingClientRect().top <= line) current = r.id;
+            });
+            // 捲到最底時，直接算最後一區（玄鳳那區比較短，可能到不了那條線）
+            const atBottom = window.innerHeight + window.scrollY >=
+                document.documentElement.scrollHeight - 4;
+            if (atBottom) current = rows[rows.length - 1].id;
+            setActive(current);
+        }
+
+        // 點選單（或首頁的按鈕）時，馬上亮起點的那一個，捲動途中先不改
+        document.querySelectorAll('a[href^="#"]').forEach((a) => {
+            a.addEventListener("click", () => {
+                setActive(a.getAttribute("href").slice(1));
+                spyLockUntil = Date.now() + 1200;
+            });
+        });
+
+        window.addEventListener("scroll", updateActive);
+        window.addEventListener("resize", updateActive);
+        updateActive();
+
+        /* ========== 5. 盒子捲到才浮現（夜晚版有樣式） ========== */
+        document.querySelectorAll(".row").forEach((row) => {
+            row.querySelectorAll(".box").forEach((box, i) => box.style.setProperty("--i", i));
+        });
+        const reveal = new IntersectionObserver((entries) => {
+            entries.forEach((en) => {
+                if (en.isIntersecting) {
+                    en.target.classList.add("in-view");
+                    reveal.unobserve(en.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll(".box").forEach((b) => reveal.observe(b));
+
+        /* ========== 6. 夜晚版：燈籠光跟著滑鼠 ========== */
+        window.addEventListener("mousemove", (e) => {
+            root.style.setProperty("--mx", e.clientX + "px");
+            root.style.setProperty("--my", e.clientY + "px");
+        });
+
+        /* ========== 7. 夜晚版：滑鼠移到盒子上會 3D 傾斜 ========== */
+        document.querySelectorAll(".box:not(.box11)").forEach((box) => {
+            box.addEventListener("mousemove", (e) => {
+                if (!isNight() || reduceMotion) return;
+                const r = box.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                box.style.transform =
+                    `perspective(700px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+            });
+            box.addEventListener("mouseleave", () => (box.style.transform = ""));
+        });
+
+        /* ========== 8. 夜晚版：點鸚鵡照片 → 跳一下 + 啾啾叫 ========== */
+        let audioCtx;
+
+        function chirp() {
+            try {
+                audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                [0, 0.13].forEach((delay) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    const t = audioCtx.currentTime + delay;
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(2200, t);
+                    osc.frequency.exponentialRampToValueAtTime(3600, t + 0.08);
+                    gain.gain.setValueAtTime(0.0001, t);
+                    gain.gain.exponentialRampToValueAtTime(0.15, t + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+                    osc.connect(gain).connect(audioCtx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.12);
+                });
+            } catch (e) {}
+        }
+
+        const words = ["啾！", "啾啾～", "嗶嗶！", "你好～"];
+        document.querySelectorAll(".box:not(.box11) img").forEach((img) => {
+            img.addEventListener("click", () => {
+                if (!isNight()) return;
+                chirp();
+                img.classList.remove("hop");
+                void img.offsetWidth;          // 讓動畫可以重播
+                img.classList.add("hop");
+
+                const pop = document.createElement("span");
+                pop.className = "chirp-pop";
+                pop.textContent = words[Math.floor(Math.random() * words.length)];
+                const box = img.closest(".box");
+                pop.style.left = (img.offsetLeft + img.offsetWidth / 2 - 24) + "px";
+                pop.style.top = (img.offsetTop - 8) + "px";
+                box.appendChild(pop);
+                setTimeout(() => pop.remove(), 900);
+            });
+        });
+    </script>
+</body>
+
+</html>
